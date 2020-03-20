@@ -16,3 +16,38 @@
 .game-name small {
     display: block;
 } 
+
+
+
+/* Add player to the waiting list */
+.search-field
+{
+height:50px;
+padding:20px;
+border:none;
+border-radius:25px;
+outline:none;
+
+}
+
+.location
+{
+width:300px;
+background:#ededed;
+}
+
+.search-btn
+{
+height:50px;
+width:100px;
+background:#002c61;
+border:none;
+color:white;
+border-radius:25px;
+}
+
+.search-btn:hover
+{
+background:#002c61;
+color:#bad9ff;
+}
