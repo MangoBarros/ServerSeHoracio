@@ -1,0 +1,86 @@
+.col-list .col-head {
+    color: white;
+    border-bottom: thick solid rgba(0, 0, 0, 0.2);
+    border-radius: 5px 5px 0 0;
+    margin-top: 45px;
+}
+.col-list .col-head span {
+    color: white;
+    font-size: 3em;
+    padding: 15px;
+    border: thick solid white;
+    border-radius: 50%;
+    margin-top: -45px;
+    background-color: #be1e2d;
+}
+.col-list .col-head h2 {
+    margin-top: 7px;
+    margin-bottom: 5px;
+    font-size: 2em;
+    font-weight: 700;
+}
+.col-list .t1 .col-head {
+    background-color: #ffb748;
+}
+.col-list .t2 .col-head {
+    background-color: #16cac8;
+}
+.col-list .t3 .col-head {
+    background-color: #f87152;
+}
+.col-list .t1 li {
+    border-bottom: 1px solid rgba(255, 183, 72, 0.4);
+}
+.col-list .t2 li {
+    border-bottom: 1px solid rgba(22, 202, 200, 0.4);
+}
+.col-list .t3 li {
+    border-bottom: 1px solid rgba(248, 113, 82, 0.4);
+}
+.col-list .t1 li:last-child,
+.col-list .t2 li:last-child,
+.col-list .t3 li:last-child {
+    border-bottom: 0;
+}
+.col-list li p {
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 7px;
+    margin: 0;
+}
+.option span {
+    color: rgba(162, 213, 0, 1);
+    margin-left: 7px;
+    margin-right: 7px;
+}
+.game-name small {
+    display: block;
+}
+
+/* Add player to the waiting list */
+.search-field {
+    height: 50px;
+    padding: 20px;
+    border: none;
+    border-radius: 25px;
+    outline: none;
+}
+
+.location {
+    width: 300px;
+    background: #ededed;
+}
+
+.search-btn {
+    height: 50px;
+    width: 100px;
+    background: #002c61;
+    border: none;
+    color: white;
+    border-radius: 25px;
+}
+
+.search-btn:hover {
+    background: #002c61;
+    color: #bad9ff;
+}
