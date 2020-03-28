@@ -49,26 +49,22 @@ btnJ.addEventListener("click", function() {
     console.log(player1.textContent, player1.textContent == "Waiting For Player");
     if (player1.textContent == "Waiting For Player" && player2.textContent == "Waiting For Player") {
         console.log("primeiiro");
-        socket.emit("proximoJogo", function() {
-            io.sockets.emit("proximoJogo");
-        });
+        socket.emit("proximoJogo", { start: "Start" });
     }
 });
 
 //Click jogo acabou
 btnP.addEventListener("click", function() {
     console.log("jogo acabou");
-    finishGame();
+    if (player1.textContent != "Waiting For Player" && player2.textContent != "Waiting For Player") {
+        finishGame();
+    }
 });
 
+//Receber nova lista de Espera
 socket.on("novoListaEspera", function(data) {
-    console.log("hello");
-    listaEspera.innerHTML = "";
-    data.forEach(element => {
-        linhaEspera = document.createElement("li");
-        linhaEspera.textContent = element;
-        listaEspera.appendChild(linhaEspera);
-    });
+    const list = ["aux", data];
+    newListaEspera(list);
 });
 
 socket.on("set-session-acknowledgement", function(data) {
@@ -110,19 +106,33 @@ function finishGame() {
     socket.emit("fimDoJogo", pontuacoes);
 }
 
+function newListaEspera(data) {
+    if (data.length == 2) {
+        console.log("hello");
+        listaEspera.innerHTML = "";
+        data[1].forEach(element => {
+            linhaEspera = document.createElement("li");
+            linhaEspera.textContent = element;
+            listaEspera.appendChild(linhaEspera);
+        });
+    }
+}
+
 function createlist(data) {
     //h3Jogadores.textContent = "";
-    console.log(data[0], data[1]);
+    console.log(data[0][0], data[0][1]);
 
     console.log("segundo");
-    player1.textContent = data[0];
-    player2.textContent = data[1];
+    player1.textContent = data[0][0];
+    player2.textContent = data[0][1];
+
+    newListaEspera(data);
 }
 
 function createlistaP(data) {
     listP.innerHTML = "";
     if (data.length != 0) {
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i <= data.length; i++) {
             console.log("primeiro");
             const line = document.createElement("li");
             console.log("segundo");
