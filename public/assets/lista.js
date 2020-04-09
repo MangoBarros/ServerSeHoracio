@@ -1,6 +1,6 @@
 //Make connection
 
-const socket = io.connect("http://localhost:4000");
+const socket = io.connect("http://192.168.1.105:4000");
 
 //butao para submeter o nome de um jogador
 const btn = document.querySelector("#send");
@@ -12,6 +12,7 @@ const listJ = document.querySelector(".listaJ");
 const player1 = document.querySelector("#player1");
 const player2 = document.querySelector("#player2");
 const listaEspera = document.querySelector("#listaEspera");
+const nomeJogador = document.querySelector("#nomeJogador");
 
 const mensagem = document.querySelector("#mensagem");
 
@@ -40,7 +41,7 @@ if (data == null) {
 btn.addEventListener("click", function() {
     console.log(name.value);
     socket.emit("listaEspera", {
-        username: name.value
+        username: "player"
     });
 });
 
@@ -61,10 +62,20 @@ btnP.addEventListener("click", function() {
     }
 });
 
+socket.on("nomeJogador", function(data) {
+    console.log("data");
+    nomeJogador.textContent = data;
+});
+
+socket.on("suaVez", function(data) {
+    console.log("data");
+    nomeJogador.textContent = nomeJogador.textContent + ": É a sua vez  ";
+});
+
 //Receber nova lista de Espera
 socket.on("novoListaEspera", function(data) {
-    const list = ["aux", data];
-    newListaEspera(list);
+    data = ["arr", data];
+    newListaEspera(data);
 });
 
 socket.on("set-session-acknowledgement", function(data) {
@@ -107,15 +118,12 @@ function finishGame() {
 }
 
 function newListaEspera(data) {
-    if (data.length == 2) {
-        console.log("hello");
-        listaEspera.innerHTML = "";
-        data[1].forEach(element => {
-            linhaEspera = document.createElement("li");
-            linhaEspera.textContent = element;
-            listaEspera.appendChild(linhaEspera);
-        });
-    }
+    listaEspera.innerHTML = "";
+    data[1].forEach(element => {
+        linhaEspera = document.createElement("li");
+        linhaEspera.textContent = element[0];
+        listaEspera.appendChild(linhaEspera);
+    });
 }
 
 function createlist(data) {
@@ -123,8 +131,8 @@ function createlist(data) {
     console.log(data[0][0], data[0][1]);
 
     console.log("segundo");
-    player1.textContent = data[0][0];
-    player2.textContent = data[0][1];
+    player1.textContent = data[0][0][0];
+    player2.textContent = data[0][1][0];
 
     newListaEspera(data);
 }

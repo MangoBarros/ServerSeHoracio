@@ -1,25 +1,31 @@
-var express = require("express");
-var socket = require("socket.io");
-var listaEspera = [];
-var listaPontuacoes = [];
-var pessoasAtivas = [];
-var tresPrimeiros = [];
+const express = require("express");
+const socket = require("socket.io");
+let listaEspera = [];
+//let listaSocketIds = [];
+let listaPontuacoes = [];
+let pessoasAtivas = [];
+let tresPrimeiros = [];
+
+let PlayerNames = [];
+for (let i = 0; i < 20; i++) {
+    PlayerNames.push("NomeJogador: " + i);
+}
 
 // App setup
 
-var app = express();
+const app = express();
 /*var server = app.listen(4000, function() {
     console.log("listening to requestes on port 4000");
 });
 */
-var server = require("http").createServer(app);
+const server = require("http").createServer(app);
 server.listen(process.env.PORT || 4000);
 
 //Static files
 app.use(express.static("public"));
 
 //Socket setup
-var io = socket(server);
+const io = socket(server);
 
 io.on("connection", function(socket) {
     console.log("made socket connection", socket.id);
@@ -30,10 +36,21 @@ io.on("connection", function(socket) {
 
     socket.on("listaEspera", function(data) {
         console.log(data);
-        listaEspera.push(data.username);
+        let aux = Math.floor(Math.random() * PlayerNames.length);
+        let name = PlayerNames[aux];
+        listaEspera.push([name, socket.id]);
+        //listaSocketIds.push(socket.id);
+        /*for (let i = 0; i < listaSocketIds.length; i++) {
+            console.log(listaSocketIds[i]);
+        }
+        Pl
+        */
+        PlayerNames.splice(aux, 1);
+
         listaEspera.forEach(element => {
             console.log(element);
         });
+        io.to(socket.id).emit("nomeJogador", name);
         io.sockets.emit("novoListaEspera", listaEspera);
     });
 
@@ -44,7 +61,10 @@ io.on("connection", function(socket) {
             io.sockets.emit("jogofail", "Não há pessoas suficientes para o proximo jogo");
         } else {
             pessoasAtivas = listaEspera.splice(0, 2);
-            console.log(pessoasAtivas[0], pessoasAtivas[1], "Emitindo novos jogadores");
+            console.log(pessoasAtivas[0][0], pessoasAtivas[1][0], "Emitindo novos jogadores");
+            emitSuaVez1(pessoasAtivas[0][1]);
+            emitSuaVez2(pessoasAtivas[1][1]);
+
             io.sockets.emit("novoJogo", [pessoasAtivas, listaEspera]);
         }
     });
@@ -67,3 +87,12 @@ io.on("connection", function(socket) {
         }
     });
 });
+
+function emitSuaVez1(id1) {
+    console.log(id1);
+    io.to(id1).emit("suaVez");
+}
+function emitSuaVez2(id2) {
+    console.log(id2);
+    io.to(id2).emit("suaVez");
+}
