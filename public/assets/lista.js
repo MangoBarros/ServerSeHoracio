@@ -6,8 +6,11 @@ const socket = io.connect("http://192.168.1.105:4000");
 const btn = document.querySelector("#send");
 const name = document.querySelector("#name");
 
+let idJogador = 0;
+let suaVez = false;
+
 //butao para ir buscar os proximos jogadores e mostrar os seus nomes numa lista
-var btnJ = document.querySelector("#fetchJogadores");
+const btnAceitaJogo = document.querySelector("#fetchJogadores");
 const listJ = document.querySelector(".listaJ");
 const player1 = document.querySelector("#player1");
 const player2 = document.querySelector("#player2");
@@ -25,6 +28,7 @@ const h3Jogadores = document.querySelector("#failJogadores");
 
 //emit events
 
+/*
 var session_id;
 // Get saved data from sessionStorage
 let data = sessionStorage.getItem("sessionId");
@@ -37,65 +41,74 @@ if (data == null) {
     socket.emit("start-session", { sessionId: session_id });
 }
 
+*/
+
 //click para adicionar jogador
-btn.addEventListener("click", function() {
+btn.addEventListener("click", function () {
     console.log(name.value);
     socket.emit("listaEspera", {
-        username: "player"
+        username: "player",
     });
 });
 
 //click para ir para o proximo jogo "fetch dos proximos jogadores"
-btnJ.addEventListener("click", function() {
+btnAceitaJogo.addEventListener("click", function () {
     console.log(player1.textContent, player1.textContent == "Waiting For Player");
-    if (player1.textContent == "Waiting For Player" && player2.textContent == "Waiting For Player") {
+    if (player1.textContent == "Waiting For Player" && player2.textContent == "Waiting For Player" && idJogador != 0 && suaVez != false) {
         console.log("primeiiro");
-        socket.emit("proximoJogo", { start: "Start" });
+        socket.emit("jogoAceite", {
+            start: "Start",
+            jogador: idJogador,
+        });
     }
 });
 
 //Click jogo acabou
-btnP.addEventListener("click", function() {
+btnP.addEventListener("click", function () {
     console.log("jogo acabou");
     if (player1.textContent != "Waiting For Player" && player2.textContent != "Waiting For Player") {
         finishGame();
     }
 });
 
-socket.on("nomeJogador", function(data) {
-    console.log("data");
-    nomeJogador.textContent = data;
+socket.on("nomeJogador", function (data) {
+    console.log(data);
+    idJogador = data[1];
+    nomeJogador.textContent = data[0];
 });
 
-socket.on("suaVez", function(data) {
-    console.log("data");
-    nomeJogador.textContent = nomeJogador.textContent + ": É a sua vez  ";
+socket.on("suaVez", function (data) {
+    console.log(data);
+    suaVez = true;
+    console.log("suaVez definido a verdadeiro");
+    nomeJogador.textContent = nomeJogador.textContent + ": É a sua vez ";
+    console.log("notificação definida");
 });
 
 //Receber nova lista de Espera
-socket.on("novoListaEspera", function(data) {
+socket.on("novoListaEspera", function (data) {
     data = ["arr", data];
     newListaEspera(data);
 });
 
-socket.on("set-session-acknowledgement", function(data) {
+socket.on("set-session-acknowledgement", function (data) {
     mensagem.textContent = "Notificacao";
     sessionStorage.setItem("sessionId", data.sessionId);
 });
 
 //falha no jogo
-socket.on("jogofail", function() {
+socket.on("jogofail", function () {
     createError();
 });
 
 //Pedido de novo jogo
-socket.on("novoJogo", function(data) {
+socket.on("novoJogo", function (data) {
     console.log("recebendo novos jogadores");
     createlist(data);
 });
 
 //Pedido de pontuacoes
-socket.on("inserePontuacoes", function(data) {
+socket.on("inserePontuacoes", function (data) {
     createlistaP(data);
 });
 
@@ -107,7 +120,7 @@ function createError() {
 function finishGame() {
     const pontuacoes = [
         [player1.textContent, 10],
-        [player2.textContent, 20]
+        [player2.textContent, 20],
     ];
     console.log(pontuacoes);
     console.log("changing labels");
@@ -119,7 +132,7 @@ function finishGame() {
 
 function newListaEspera(data) {
     listaEspera.innerHTML = "";
-    data[1].forEach(element => {
+    data[1].forEach((element) => {
         linhaEspera = document.createElement("li");
         linhaEspera.textContent = element[0];
         listaEspera.appendChild(linhaEspera);
